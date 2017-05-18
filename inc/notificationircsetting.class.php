@@ -35,23 +35,23 @@ if (!defined('GLPI_ROOT')) {
 }
 
 /**
- *  This class manages the sms notifications settings
+ *  This class manages the irc notifications settings
  */
-class PluginSmsNotificationSmsSetting extends NotificationSetting {
+class PluginIrcNotificationIrcSetting extends NotificationSetting {
 
 
    static function getTypeName($nb=0) {
-      return __('SMS followups configuration', 'sms');
+      return __('IRC followups configuration', 'irc');
    }
 
 
    public function getEnableLabel() {
-      return __('Enable followups via SMS', 'sms');
+      return __('Enable followups via IRC', 'irc');
    }
 
 
    static public function getMode() {
-      return NotificationTemplateTemplate::MODE_SMS;
+      return NotificationTemplateTemplate::MODE_IRC;
    }
 
 
@@ -67,20 +67,20 @@ class PluginSmsNotificationSmsSetting extends NotificationSetting {
       $out .= "<div>";
       $out .= "<input type='hidden' name='id' value='1'>";
       $out .= "<table class='tab_cadre_fixe'>";
-      $out .= "<tr class='tab_bg_1'><th colspan='4'>"._n('SMS notification', 'SMS notifications', Session::getPluralNumber(), 'sms')."</th></tr>";
+      $out .= "<tr class='tab_bg_1'><th colspan='4'>"._n('IRC notification', 'IRC notifications', Session::getPluralNumber(), 'irc')."</th></tr>";
 
-      if ($CFG_GLPI['notifications_sms']) {
+      if ($CFG_GLPI['notifications_irc']) {
          //TODO
-         $out .= "<tr><td colspan='4'>" . __('SMS notifications are not implemented yet.', 'sms') .  "</td></tr>";
+         $out .= "<tr><td colspan='4'>" . __('IRC notifications are not implemented yet.', 'irc') .  "</td></tr>";
       } else {
          $out .= "<tr><td colspan='4'>" . __('Notifications are disabled.')  . " <a href='{$CFG_GLPI['root_doc']}/front/setup.notification.php'>" . _('See configuration') .  "</td></tr>";
       }
       $options['candel']     = false;
-      if ($CFG_GLPI['notifications_sms']) {
-         $options['addbuttons'] = array('test_sms_send' => __('Send a test SMS to you', 'sms'));
+      if ($CFG_GLPI['notifications_irc']) {
+         $options['addbuttons'] = array('test_irc_send' => __('Send a test IRC to you', 'irc'));
       }
 
-      if (defined('PLUGIN_SMS_UNIT_TESTS')) {
+      if (defined('PLUGIN_IRC_UNIT_TESTS')) {
          return $out;
       }
       //Ignore display parameter since showFormButtons is now ready :/ (from all but tests)

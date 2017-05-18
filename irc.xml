@@ -1,25 +1,25 @@
 <root>
-   <name>sms</name>
-   <key>sms</key>
+   <name>irc</name>
+   <key>irc</key>
    <!-- stable, beta, development, alpha, ... -->
    <state>stable</state>
-   <logo>https://raw.githubusercontent.com/pluginsGLPI/sms/master/{LNAME}.png</logo>
+   <logo>https://raw.githubusercontent.com/pluginsGLPI/irc/master/{LNAME}.png</logo>
    <description>
       <short>
          <!-- Add as many lang tag you want -->
-         <en>sms GLPI plugin.</en>
-         <fr>Plugin GLPI sms</fr>
+         <en>irc GLPI plugin.</en>
+         <fr>Plugin GLPI irc</fr>
       </short>
       <long>
          <!-- Add as many lang tag you want -->
-         <en>A long description for sms GLPI plugin.</en>
-         <fr>Un description longue pour le plugin GLPI sms</fr>
+         <en>A long description for irc GLPI plugin.</en>
+         <fr>Un description longue pour le plugin GLPI irc</fr>
       </long>
    </description>
-   <homepage>https://github.com/pluginsGLPI/sms</homepage>
-   <download>https://github.com/pluginsGLPI/sms/releases</download>
-   <issues>https://github.com/pluginsGLPI/sms/issues</issues>
-   <readme>https://github.com/pluginsGLPI/sms/blob/master/README.md</readme>
+   <homepage>https://github.com/pluginsGLPI/irc</homepage>
+   <download>https://github.com/pluginsGLPI/irc/releases</download>
+   <issues>https://github.com/pluginsGLPI/irc/issues</issues>
+   <readme>https://github.com/pluginsGLPI/irc/blob/master/README.md</readme>
    <authors>
       <!-- Add as many author tag you want -->
       <author>Teclib'</author>

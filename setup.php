@@ -1,32 +1,32 @@
 <?php
 /*
  -------------------------------------------------------------------------
- sms plugin for GLPI
- Copyright (C) 2017 by the sms Development Team.
+ irc plugin for GLPI
+ Copyright (C) 2017 by the irc Development Team.
 
- https://github.com/pluginsGLPI/sms
+ https://github.com/pluginsGLPI/irc
  -------------------------------------------------------------------------
 
  LICENSE
 
- This file is part of sms.
+ This file is part of irc.
 
- sms is free software; you can redistribute it and/or modify
+ irc is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
  the Free Software Foundation; either version 2 of the License, or
  (at your option) any later version.
 
- sms is distributed in the hope that it will be useful,
+ irc is distributed in the hope that it will be useful,
  but WITHOUT ANY WARRANTY; without even the implied warranty of
  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  GNU General Public License for more details.
 
  You should have received a copy of the GNU General Public License
- along with sms. If not, see <http://www.gnu.org/licenses/>.
+ along with irc. If not, see <http://www.gnu.org/licenses/>.
  --------------------------------------------------------------------------
  */
 
-define('PLUGIN_SMS_VERSION', '0.0.1');
+define('PLUGIN_IRC_VERSION', '0.0.1');
 
 /**
  * Init hooks of the plugin.
@@ -34,17 +34,17 @@ define('PLUGIN_SMS_VERSION', '0.0.1');
  *
  * @return void
  */
-function plugin_init_sms() {
+function plugin_init_irc() {
    global $PLUGIN_HOOKS, $CFG_GLPI;
    $plugin = new Plugin();
 
-   $PLUGIN_HOOKS['csrf_compliant']['sms'] = true;
+   $PLUGIN_HOOKS['csrf_compliant']['irc'] = true;
 
-   if ($plugin->isActivated('sms')) {
+   if ($plugin->isActivated('irc')) {
       NotificationTemplateTemplate::registerMode(
-         NotificationTemplateTemplate::MODE_SMS,
-         __('SMS', 'plugin_sms'),
-         'sms'
+         NotificationTemplateTemplate::MODE_IRC,
+         __('IRC', 'plugin_irc'),
+         'irc'
       );
    }
 }
@@ -56,10 +56,10 @@ function plugin_init_sms() {
  *
  * @return array
  */
-function plugin_version_sms() {
+function plugin_version_irc() {
    return [
-      'name'           => 'sms',
-      'version'        => PLUGIN_SMS_VERSION,
+      'name'           => 'irc',
+      'version'        => PLUGIN_IRC_VERSION,
       'author'         => '<a href="http://www.teclib.com">Teclib\'</a>',
       'license'        => '',
       'homepage'       => '',
@@ -73,7 +73,7 @@ function plugin_version_sms() {
  *
  * @return boolean
  */
-function plugin_sms_check_prerequisites() {
+function plugin_irc_check_prerequisites() {
    // Strict version check (could be less strict, or could allow various version)
    if (version_compare(GLPI_VERSION, '9.2', 'lt')) {
       if (method_exists('Plugin', 'messageIncompatible')) {
@@ -93,13 +93,13 @@ function plugin_sms_check_prerequisites() {
  *
  * @return boolean
  */
-function plugin_sms_check_config($verbose = false) {
+function plugin_irc_check_config($verbose = false) {
    if (true) { // Your configuration check
       return true;
    }
 
    if ($verbose) {
-      _e('Installed / not configured', 'sms');
+      _e('Installed / not configured', 'irc');
    }
    return false;
 }

@@ -4,15 +4,15 @@ namespace tests\units;
 
 use \atoum;
 
-class PluginSmsNotificationEventSms extends \DbTestCase {
+class PluginIrcNotificationEventIrc extends \DbTestCase {
 
    public function testGetTargetField() {
       $data = [];
-      $this->string(\PluginSmsNotificationEventSms::getTargetField($data))->isIdenticalTo('phone');
+      $this->string(\PluginIrcNotificationEventIrc::getTargetField($data))->isIdenticalTo('phone');
       $this->array($data)->isIdenticalTo(['phone' => null]);
 
       $data = ['phone' => '+33625885120'];
-      $this->string(\PluginSmsNotificationEventSms::getTargetField($data))->isIdenticalTo('phone');
+      $this->string(\PluginIrcNotificationEventIrc::getTargetField($data))->isIdenticalTo('phone');
       $this->array($data)->isIdenticalTo(['phone' => '+33625885120']);
 
       $user = new \User();
@@ -25,25 +25,25 @@ class PluginSmsNotificationEventSms extends \DbTestCase {
 
       $user->add($phones);
       $data = ['users_id' => $user->getID()];
-      $this->string(\PluginSmsNotificationEventSms::getTargetField($data))->isIdenticalTo('phone');
+      $this->string(\PluginIrcNotificationEventIrc::getTargetField($data))->isIdenticalTo('phone');
       $this->array($data)->isIdenticalTo(['users_id' => $user->getID(), 'phone' => '+33601020405']);
 
       unset($phones['mobile']);
       $phones['name'] = 'Another user name';
       $user->add($phones);
       $data = ['users_id' => $user->getID()];
-      $this->string(\PluginSmsNotificationEventSms::getTargetField($data))->isIdenticalTo('phone');
+      $this->string(\PluginIrcNotificationEventIrc::getTargetField($data))->isIdenticalTo('phone');
       $this->array($data)->isIdenticalTo(['users_id' => $user->getID(), 'phone' => '+33101020405']);
 
       unset($phones['phone']);
       $phones['name'] = 'Yet another one';
       $user->add($phones);
       $data = ['users_id' => $user->getID()];
-      $this->string(\PluginSmsNotificationEventSms::getTargetField($data))->isIdenticalTo('phone');
+      $this->string(\PluginIrcNotificationEventIrc::getTargetField($data))->isIdenticalTo('phone');
       $this->array($data)->isIdenticalTo(['users_id' => $user->getID(), 'phone' => '+33201020405']);
    }
 
    public function testCanCron() {
-      $this->boolean(\PluginSmsNotificationEventSms::canCron())->isTrue();
+      $this->boolean(\PluginIrcNotificationEventIrc::canCron())->isTrue();
    }
 }

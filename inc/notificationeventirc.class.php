@@ -34,9 +34,9 @@ if (!defined('GLPI_ROOT')) {
    die("Sorry. You can't access this file directly");
 }
 
-class PluginSmsNotificationEventSms implements NotificationEventInterface {
+class PluginIrcNotificationEventIrc implements NotificationEventInterface {
    /**
-    * Raise a SMS notification event
+    * Raise a IRC notification event
     *
     * @param string               $event              Event
     * @param CommonDBTM           $item               Notification data
@@ -60,7 +60,7 @@ class PluginSmsNotificationEventSms implements NotificationEventInterface {
       $notify_me
    ) {
       global $CFG_GLPI;
-      if ($CFG_GLPI['notifications_sms']) {
+      if ($CFG_GLPI['notifications_irc']) {
          $entity = $notificationtarget->getEntity();
          $processed    = array();
          $notprocessed = array();

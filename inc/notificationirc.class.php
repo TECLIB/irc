@@ -35,9 +35,9 @@ if (!defined('GLPI_ROOT')) {
 }
 
 /**
- *  NotificationSms
+ *  NotificationIrc
 **/
-class PluginSmsNotificationSms implements NotificationInterface {
+class PluginIrcNotificationIrc implements NotificationInterface {
 
    /**
     * Check data
@@ -54,14 +54,14 @@ class PluginSmsNotificationSms implements NotificationInterface {
 
    static function testNotification() {
       Session::addMessageAfterRedirect(
-         __('SMS notifications are not implemented yet.', 'sms'),
+         __('IRC notifications are not implemented yet.', 'irc'),
          true,
          WARNING
       );
       return;
       /*$instance = new self();
       $instance->sendNotification([
-         '_itemtype'                   => 'NotificationSms',
+         '_itemtype'                   => 'NotificationIrc',
          '_items_id'                   => 0,
          '_notificationtemplates_id'   => 0,
          '_entities_id'                => 0,
@@ -87,7 +87,7 @@ class PluginSmsNotificationSms implements NotificationInterface {
       $data['body_text']                            = $options['content_text'];
       $data['recipient']                            = $options['to'];
 
-      $data['mode'] = NotificationTemplateTemplate::MODE_SMS;
+      $data['mode'] = NotificationTemplateTemplate::MODE_IRC;
 
       $mailqueue = new QueuedMail();
 
@@ -98,7 +98,7 @@ class PluginSmsNotificationSms implements NotificationInterface {
          //TRANS to be written in logs %1$s is the to email / %2$s is the subject of the mail
          Toolbox::logInFile("notification",
                             sprintf(__('%1$s: %2$s'),
-                                    sprintf(__('An SMS notification to %s was added to queue', 'sms'),
+                                    sprintf(__('An IRC notification to %s was added to queue', 'irc'),
                                             $options['to']),
                                     $options['subject']."\n"));
       }

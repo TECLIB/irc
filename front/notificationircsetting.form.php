@@ -37,10 +37,10 @@
 include ('../../../inc/includes.php');
 
 Session::checkRight("config", UPDATE);
-$notificationsms = new PluginSmsNotificationSmsSetting();
+$notificationirc = new PluginIrcNotificationIrcSetting();
 
-if (!empty($_POST["test_sms_send"])) {
-   PluginSmsNotificationSms::testNotification();
+if (!empty($_POST["test_irc_send"])) {
+   PluginIrcNotificationIrc::testNotification();
    Html::back();
 } else if (!empty($_POST["update"])) {
    $config = new Config();
@@ -50,6 +50,6 @@ if (!empty($_POST["test_sms_send"])) {
 
 Html::header(Notification::getTypeName(Session::getPluralNumber()), $_SERVER['PHP_SELF'], "config", "notification", "config");
 
-$notificationsms->display(array('id' => 1));
+$notificationirc->display(array('id' => 1));
 
 Html::footer();
