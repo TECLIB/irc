@@ -70,8 +70,36 @@ class PluginIrcNotificationIrcSetting extends NotificationSetting {
       $out .= "<tr class='tab_bg_1'><th colspan='4'>"._n('IRC notification', 'IRC notifications', Session::getPluralNumber(), 'irc')."</th></tr>";
 
       if ($CFG_GLPI['notifications_irc']) {
-         //TODO
-         $out .= "<tr><td colspan='4'>" . __('IRC notifications are not implemented yet.', 'irc') .  "</td></tr>";
+         $out .= "<tr class='tab_bg_2'>";
+         $out .= "<td>" . __('IRC server') . "</td>";
+         $out .= "<td><input type='text' name='pluginirc_config_server' size='40' value='".
+                    $CFG_GLPI["pluginirc_config_server"]."' required='required'>";
+         $out .= "</td>";
+         $out .= "<td >" . __('Port') . "</td>";
+         $out .= "<td><input type='text' name='pluginirc_config_port' size='40' value='" .
+                    $CFG_GLPI["pluginirc_config_port"] . "' required='required'>";
+         $out .= " </td></tr>";
+
+         $out .= "<tr class='tab_bg_2'>";
+         $out .= "<td>" . __('Nickname') . "</td>";
+         $out .= "<td><input type='text' name='pluginirc_config_nick' size='40' value='".
+                    $CFG_GLPI["pluginirc_config_nick"]."' required='required'>";
+         $out .= "</td>";
+         //TODO: do not show password
+         $out .= "<td >" . __('Password') . "</td>";
+         $out .= "<td><input type='password' name='pluginirc_config_pass' size='40' value='" .
+                    $CFG_GLPI["pluginirc_config_pass"] . "'>";
+         $out .= " </td></tr>";
+
+         $out .= "<tr class='tab_bg_2'>";
+         $out .= "<td >" . __('Channels') . "</td>";
+         $out .= "<td><input type='text' name='pluginirc_config_channels' size='40' value='" .
+                    $CFG_GLPI["pluginirc_config_channels"] . "'>";
+         $out .= " </td>";
+         $out .= "<td >" . __('Nick to') . "</td>";
+         $out .= "<td><input type='text' name='pluginirc_config_nicksto' size='40' value='" .
+                    $CFG_GLPI["pluginirc_config_nicksto"] . "'>";
+         $out .= " </td></tr>";
       } else {
          $out .= "<tr><td colspan='4'>" . __('Notifications are disabled.')  . " <a href='{$CFG_GLPI['root_doc']}/front/setup.notification.php'>" . _('See configuration') .  "</td></tr>";
       }

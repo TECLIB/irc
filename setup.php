@@ -35,7 +35,7 @@ define('PLUGIN_IRC_VERSION', '0.0.1');
  * @return void
  */
 function plugin_init_irc() {
-   global $PLUGIN_HOOKS, $CFG_GLPI;
+   global $PLUGIN_HOOKS;
    $plugin = new Plugin();
 
    $PLUGIN_HOOKS['csrf_compliant']['irc'] = true;

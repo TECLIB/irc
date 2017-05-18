@@ -135,22 +135,9 @@ class PluginIrcNotificationEventIrc implements NotificationEventInterface {
 
 
    static public function getTargetField(&$data) {
-      $field = 'phone';
+      $field = 'users_id';
 
-      if (!isset($data[$field])
-         && isset($data['users_id'])) {
-         // No phone set: get one for user
-         $user = new user();
-         $user->getFromDB($data['users_id']);
-
-         $phone_fields = ['mobile', 'phone', 'phone2'];
-         foreach ($phone_fields as $phone_field) {
-            if (isset($user->fields[$phone_field]) && !empty($user->fields[$phone_field])) {
-               $data[$field] = $user->fields[$phone_field];
-               break;
-            }
-         }
-      } else if (!isset($data[$field])) {
+      if (!isset($data[$field])) {
          //Missing field; set to null
          $data[$field] = null;
       }
@@ -165,33 +152,107 @@ class PluginIrcNotificationEventIrc implements NotificationEventInterface {
 
 
    static public function getAdminData() {
-      //no phone available for global admin right now
+      //no conf available for global admin right now
       return false;
    }
 
 
    static public function getEntityAdminsData($entity) {
-      global $DB, $CFG_GLPI;
-
-      $iterator = $DB->request([
-         'FROM'   => 'glpi_entities',
-         'WHERE'  => ['id' => $entity]
-      ]);
-
-      $admins = [];
-
-      while ($row = $iterator->next()) {
-         $admins[] = [
-            'language'  => $CFG_GLPI['language'],
-            'phone'     => $row['phone_number']
-         ];
-      }
-
-      return $admins;
+      //no conf available for entity admins right now
+      return false;
    }
 
 
    static public function send(array $data) {
-      throw new \RuntimeException('Not yet implemented!');
+      global $CFG_GLPI;
+
+      $server = self::connectIrc();
+
+      $process = true;
+      while ($process) {
+         $read = fgets($server, 1024);
+         Toolbox::logDebug("[RECIVE] $read");
+         $ret = explode(':', $read);
+         if (rtrim($ret[0]) == "PING") {
+            self::sendCommand($server, "PONG :".$ret(0));
+            $process  = false;
+         }
+
+         if (preg_match('#:(.+):End Of /MOTD Command.#i', $read)) {
+            $process = false;
+         }
+      }
+
+      $channels = [];
+      if (!empty($CFG_GLPI['pluginirc_config_channels'])) {
+         $channels = explode(',', $CFG_GLPI['pluginirc_config_channels']);
+      }
+
+      $nicks = [];
+      if (!empty($CFG_GLPI['pluginirc_config_nicksto'])) {
+         $nicks = explode(',', $CFG_GLPI['pluginirc_config_nicksto']);
+      }
+
+      foreach ($channels as &$channel) {
+         if (substr($channel, 0, 1) !== '#') {
+            $channel = '#' . $channel;
+         }
+         self::sendCommand($server, "JOIN :$channel");
+      }
+
+      $sent = [];
+      foreach ($data as $row) {
+         $current = new QueuedMail();
+         $current->getFromResultSet($row);
+
+         //prevent dups
+         $msg = $current->fields['body_text'];
+         if (!in_array($msg, $sent)) {
+            $lines = preg_split('/\n|\r\n?/', $msg);
+            foreach ($channels as $channel) {
+               foreach ($lines as $line) {
+                  self::sendCommand($server, "PRIVMSG $channel :$line");
+               }
+            }
+            foreach ($nicks as $nick) {
+               foreach ($lines as $line) {
+                  self::sendCommand($server, "NOTICE $nick :$line");
+               }
+            }
+            $sent[] = $msg;
+         }
+      }
+   }
+
+
+   /**
+    * Connects to IRc server and set nickname
+    *
+    * @return resource
+    */
+   static private function connectIrc() {
+      global $CFG_GLPI;
+
+      $server = fsockopen(
+         $CFG_GLPI['pluginirc_config_server'],
+         $CFG_GLPI['pluginirc_config_port']
+      );
+
+      self::sendCommand($server, "USER {$CFG_GLPI['pluginirc_config_nick']} USING PHP IRC"); //sends the user must have 4 paramters
+      self::sendCommand($server, "NICK {$CFG_GLPI['pluginirc_config_nick']}"); //sends the nickname
+      return $server;
+   }
+
+   /**
+    * Send a message over the IRC server and print in log
+    *
+    * @param resource $server Resource instance
+    * @param string   $cmd    Command to send
+    *
+    * @return void
+    */
+   static private function SendCommand ($server, $cmd) {
+      fputs($server, $cmd . "\r\n");
+      Toolbox::logDebug("[SEND] $cmd \n");
    }
 }
