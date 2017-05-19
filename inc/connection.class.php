@@ -43,15 +43,15 @@ class PluginIrcConnection {
     * @return resource
     */
    public function connectIrc() {
-      global $CFG_GLPI;
+      $conf = Config::getConfigurationValues('plugin:irc');
 
       $this->connection = fsockopen(
-         $CFG_GLPI['pluginirc_config_server'],
-         $CFG_GLPI['pluginirc_config_port']
+         $conf['server'],
+         $conf['port']
       );
 
-      $this->sendCommand("USER {$CFG_GLPI['pluginirc_config_nick']} USING PHP IRC"); //sends the user must have 4 paramters
-      $this->sendCommand("NICK {$CFG_GLPI['pluginirc_config_nick']}"); //sends the nickname
+      $this->sendCommand("USER {$conf['nick']} USING PHP IRC"); //sends the user must have 4 paramters
+      $this->sendCommand("NICK {$conf['nick']}"); //sends the nickname
 
       $process = true;
       while ($process) {

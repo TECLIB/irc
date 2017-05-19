@@ -17,7 +17,7 @@ class PluginIrcNotificationIrc extends atoum {
       $this->boolean($plugin->isActivated('irc'))->isTrue();
 
       //check if mode has been registered successfully
-      //$this->array($CFG_GLPI)->hasKey('notifications_irc');
+      $this->array($CFG_GLPI)->hasKey('notifications_irc');
       $expected = [
          'label'  => 'IRC',
          'from'   => 'irc'

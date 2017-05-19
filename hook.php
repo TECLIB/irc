@@ -32,6 +32,18 @@
  * @return boolean
  */
 function plugin_irc_install() {
+   Config::setConfigurationValues('core', ['notifications_irc']);
+   Config::setConfigurationValues(
+      'plugin:irc', [
+         'server',
+         'port',
+         'nick',
+         'password',
+         'channels',
+         'nicksto'
+      ]
+   );
+
    return true;
 }
 

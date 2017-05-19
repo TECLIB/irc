@@ -166,19 +166,18 @@ class PluginIrcNotificationEventIrc implements NotificationEventInterface {
 
 
    static public function send(array $data) {
-      global $CFG_GLPI;
-
+      $conf = Config::getConfigurationValues('plugin:irc');
       $connection = self::getConnection();
       $connection->connectIrc();
 
       $channels = [];
-      if (!empty($CFG_GLPI['pluginirc_config_channels'])) {
-         $channels = explode(',', $CFG_GLPI['pluginirc_config_channels']);
+      if (!empty($conf['channels'])) {
+         $channels = explode(',', $conf['channels']);
       }
 
       $nicks = [];
-      if (!empty($CFG_GLPI['pluginirc_config_nicksto'])) {
-         $nicks = explode(',', $CFG_GLPI['pluginirc_config_nicksto']);
+      if (!empty($conf['nicksto'])) {
+         $nicks = explode(',', $conf['nicksto']);
       }
 
       foreach ($channels as &$channel) {

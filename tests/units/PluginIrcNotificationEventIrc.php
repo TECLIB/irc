@@ -21,9 +21,8 @@ class PluginIrcNotificationEventIrc extends \DbTestCase {
    }
 
    public function testSend() {
-      global $CFG_GLPI;
-
-      $CFG_GLPI['pluginirc_config_channels'] = '#glpi_test';
+      $initialconf = \Config::getConfigurationValues('plugin:irc');
+      \Config::setConfigurationvalues('plugin:irc', ['channels' => '#glpi_test']);
 
       $connection = new \mock\PluginIrcConnection();
       $event = new \PluginIrcNotificationEventIrc();
@@ -52,7 +51,7 @@ class PluginIrcNotificationEventIrc extends \DbTestCase {
       ]);
 
       $fake_srv = [];
-      $CFG_GLPI['pluginirc_config_channels'] = 'glpi_test,#another_channel';
+      \Config::setConfigurationvalues('plugin:irc', ['channels' => 'glpi_test,#another_channel']);
       $event->send([
          ['body_text' => 'This is a message from GLPI IRC plugin unit tests!'],
       ]);
@@ -65,7 +64,7 @@ class PluginIrcNotificationEventIrc extends \DbTestCase {
       ]);
 
       $fake_srv = [];
-      $CFG_GLPI['pluginirc_config_nicksto'] = 'oneuser,anotheruser';
+      \Config::setConfigurationvalues('plugin:irc', ['nicksto' => 'oneuser,anotheruser']);
       $event->send([
          ['body_text' => 'This is a message from GLPI IRC plugin unit tests!'],
       ]);
@@ -78,5 +77,8 @@ class PluginIrcNotificationEventIrc extends \DbTestCase {
          5 => 'NOTICE anotheruser :This is a message from GLPI IRC plugin unit tests!',
          6 => 'QUIT'
       ]);
+
+      //reset Config
+      \Config::setConfigurationvalues('plugin:irc', $initialconf);
    }
 }
