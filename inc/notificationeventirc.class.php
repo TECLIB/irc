@@ -206,22 +206,39 @@ class PluginIrcNotificationEventIrc implements NotificationEventInterface {
          $current->getFromResultSet($row);
 
          //prevent dups
-         $msg = $current->fields['body_text'];
+         $msg = str_replace(["\r", "\n", "\t"], ' ', $current->fields['body_text']);
          if (!in_array($msg, $sent)) {
-            $lines = preg_split('/\n|\r\n?/', $msg);
+            //take care of too long lines
+            $lines = str_split($msg, 500);
+            //prevent excess flood
+            if (count($lines) > 3) {
+               Toolbox::logDebug('IRC notification is above the limit of 3 x 500 chars!');
+               $lines = array_slice(0, 3);
+               $lines[2] .= ' (' . __('truncated', 'irc') . ')';
+            }
+
+            //send to configured channels
             foreach ($channels as $channel) {
                foreach ($lines as $line) {
                   self::sendCommand($server, "PRIVMSG $channel :$line");
                }
             }
+
+            //send to configured nicks
             foreach ($nicks as $nick) {
                foreach ($lines as $line) {
                   self::sendCommand($server, "NOTICE $nick :$line");
                }
             }
             $sent[] = $msg;
+            $current->update([
+               'id'        => $current->getID(),
+               'sent_time' => $_SESSION['glpi_currenttime']
+            ]);
+            $current->delete(['id' => $current->getID()]);
          }
       }
+      self::sendCommand($server, "QUIT");
    }
 
 

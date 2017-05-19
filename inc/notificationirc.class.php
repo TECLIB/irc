@@ -53,23 +53,18 @@ class PluginIrcNotificationIrc implements NotificationInterface {
    }
 
    static function testNotification() {
-      Session::addMessageAfterRedirect(
-         __('IRC notifications are not implemented yet.', 'irc'),
-         true,
-         WARNING
-      );
-      return;
-      /*$instance = new self();
+      $instance = new self();
       $instance->sendNotification([
-         '_itemtype'                   => 'NotificationIrc',
-         '_items_id'                   => 0,
+         '_itemtype'                   => 'PluginIrcNotificationIrc',
+         '_items_id'                   => 1,
          '_notificationtemplates_id'   => 0,
          '_entities_id'                => 0,
          'fromname'                    => 'TEST',
          'subject'                     => 'Test notification',
          'content_text'                => "Hello, this is a test notification.",
-         'to'                          => Session::getLoginUserID()
-      ]);*/
+         'to'                          => Session::getLoginUserID(),
+         '_send_now'                   => true
+      ]);
    }
 
 
@@ -92,7 +87,7 @@ class PluginIrcNotificationIrc implements NotificationInterface {
       $mailqueue = new QueuedMail();
 
       if (!$mailqueue->add(Toolbox::addslashes_deep($data))) {
-         Session::addMessageAfterRedirect(__('Error inserting ajax notification to queue'), true, ERROR);
+         Session::addMessageAfterRedirect(__('Error inserting IRC notification to queue'), true, ERROR);
          return false;
       } else {
          //TRANS to be written in logs %1$s is the to email / %2$s is the subject of the mail
@@ -101,6 +96,13 @@ class PluginIrcNotificationIrc implements NotificationInterface {
                                     sprintf(__('An IRC notification to %s was added to queue', 'irc'),
                                             $options['to']),
                                     $options['subject']."\n"));
+      }
+
+      if (isset($options['_send_now'])) {
+         $mailqueue::forceSendFor(
+            $options['_itemtype'],
+            $options['_items_id']
+         );
       }
 
       return true;

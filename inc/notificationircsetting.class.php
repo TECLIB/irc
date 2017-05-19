@@ -105,7 +105,7 @@ class PluginIrcNotificationIrcSetting extends NotificationSetting {
       }
       $options['candel']     = false;
       if ($CFG_GLPI['notifications_irc']) {
-         $options['addbuttons'] = array('test_irc_send' => __('Send a test IRC to you', 'irc'));
+         $options['addbuttons'] = array('test_irc_send' => __('Send a test over IRC', 'irc'));
       }
 
       if (defined('PLUGIN_IRC_UNIT_TESTS')) {
