@@ -229,6 +229,7 @@ class PluginIrcNotificationEventIrc implements NotificationEventInterface {
          $current->delete(['id' => $current->getID()]);
       }
       $connection->sendCommand("QUIT");
+      return count($data);
    }
 
 
