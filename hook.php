@@ -32,15 +32,15 @@
  * @return boolean
  */
 function plugin_irc_install() {
-   Config::setConfigurationValues('core', ['notifications_irc']);
+   Config::setConfigurationValues('core', ['notifications_irc' => 0]);
    Config::setConfigurationValues(
       'plugin:irc', [
-         'server',
-         'port',
-         'nick',
-         'password',
-         'channels',
-         'nicksto'
+         'server'    => '',
+         'port'      => '',
+         'nick'      => '',
+         'password'  => '',
+         'channels'  => '',
+         'nicksto'   => ''
       ]
    );
 
@@ -53,5 +53,9 @@ function plugin_irc_install() {
  * @return boolean
  */
 function plugin_irc_uninstall() {
+   $config = new Config();
+   $config->deleteByCriteria(['context' => 'plugin:irc']);
+   $config->deleteConfigurationValues('core', ['notifications_irc']);
+
    return true;
 }
