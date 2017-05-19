@@ -209,9 +209,9 @@ class PluginIrcNotificationEventIrc implements NotificationEventInterface {
          }
 
          //send to configured channels
-         foreach ($channels as $channel) {
+         foreach ($channels as $chan) {
             foreach ($lines as $line) {
-               $connection->sendCommand("PRIVMSG $channel :$line");
+               $connection->sendCommand("PRIVMSG $chan :$line");
             }
          }
 
