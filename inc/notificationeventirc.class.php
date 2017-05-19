@@ -35,6 +35,8 @@ if (!defined('GLPI_ROOT')) {
 }
 
 class PluginIrcNotificationEventIrc implements NotificationEventInterface {
+   static $connection;
+
    /**
     * Raise a IRC notification event
     *
@@ -166,22 +168,8 @@ class PluginIrcNotificationEventIrc implements NotificationEventInterface {
    static public function send(array $data) {
       global $CFG_GLPI;
 
-      $server = self::connectIrc();
-
-      $process = true;
-      while ($process) {
-         $read = fgets($server, 1024);
-         Toolbox::logDebug("[RECIVE] $read");
-         $ret = explode(':', $read);
-         if (rtrim($ret[0]) == "PING") {
-            self::sendCommand($server, "PONG :".$ret(0));
-            $process  = false;
-         }
-
-         if (preg_match('#:(.+):End Of /MOTD Command.#i', $read)) {
-            $process = false;
-         }
-      }
+      $connection = self::getConnection();
+      $connection->connectIrc();
 
       $channels = [];
       if (!empty($CFG_GLPI['pluginirc_config_channels'])) {
@@ -197,7 +185,7 @@ class PluginIrcNotificationEventIrc implements NotificationEventInterface {
          if (substr($channel, 0, 1) !== '#') {
             $channel = '#' . $channel;
          }
-         self::sendCommand($server, "JOIN :$channel");
+         $connection->sendCommand("JOIN :$channel");
       }
 
       $sent = [];
@@ -205,71 +193,65 @@ class PluginIrcNotificationEventIrc implements NotificationEventInterface {
          $current = new QueuedMail();
          $current->getFromResultSet($row);
 
-         //prevent dups
          $msg = str_replace(["\r", "\n", "\t"], ' ', $current->fields['body_text']);
-         if (!in_array($msg, $sent)) {
-            //take care of too long lines
-            $lines = str_split($msg, 500);
-            //prevent excess flood
-            if (count($lines) > 3) {
-               Toolbox::logDebug('IRC notification is above the limit of 3 x 500 chars!');
-               $lines = array_slice(0, 3);
-               $lines[2] .= ' (' . __('truncated', 'irc') . ')';
-            }
-
-            //send to configured channels
-            foreach ($channels as $channel) {
-               foreach ($lines as $line) {
-                  self::sendCommand($server, "PRIVMSG $channel :$line");
-               }
-            }
-
-            //send to configured nicks
-            foreach ($nicks as $nick) {
-               foreach ($lines as $line) {
-                  self::sendCommand($server, "NOTICE $nick :$line");
-               }
-            }
-            $sent[] = $msg;
-            $current->update([
-               'id'        => $current->getID(),
-               'sent_time' => $_SESSION['glpi_currenttime']
-            ]);
-            $current->delete(['id' => $current->getID()]);
+         //prevent dups
+         if (in_array($msg, $sent)) {
+            continue;
          }
+
+         //take care of too long lines
+         $lines = str_split($msg, 500);
+         //prevent excess flood
+         if (count($lines) > 3) {
+            Toolbox::logDebug('IRC notification is above the limit of 3 x 500 chars!');
+            $lines = array_slice(0, 3);
+            $lines[2] .= ' (' . __('truncated', 'irc') . ')';
+         }
+
+         //send to configured channels
+         foreach ($channels as $channel) {
+            foreach ($lines as $line) {
+               $connection->sendCommand("PRIVMSG $channel :$line");
+            }
+         }
+
+         //send to configured nicks
+         foreach ($nicks as $nick) {
+            foreach ($lines as $line) {
+               $connection->sendCommand("NOTICE $nick :$line");
+            }
+         }
+         $sent[] = $msg;
+         $current->update([
+            'id'        => $current->getID(),
+            'sent_time' => $_SESSION['glpi_currenttime']
+         ]);
+         $current->delete(['id' => $current->getID()]);
       }
-      self::sendCommand($server, "QUIT");
+      $connection->sendCommand("QUIT");
    }
 
 
    /**
-    * Connects to IRc server and set nickname
+    * Get connection instance
     *
-    * @return resource
+    * @return PluginIrcConnection
     */
-   static private function connectIrc() {
-      global $CFG_GLPI;
-
-      $server = fsockopen(
-         $CFG_GLPI['pluginirc_config_server'],
-         $CFG_GLPI['pluginirc_config_port']
-      );
-
-      self::sendCommand($server, "USER {$CFG_GLPI['pluginirc_config_nick']} USING PHP IRC"); //sends the user must have 4 paramters
-      self::sendCommand($server, "NICK {$CFG_GLPI['pluginirc_config_nick']}"); //sends the nickname
-      return $server;
+   protected static function getConnection() {
+      if (static::$connection === null) {
+         static::$connection = new PluginIrcConnection();
+      }
+      return static::$connection;
    }
 
    /**
-    * Send a message over the IRC server and print in log
+    * Set connection instance
     *
-    * @param resource $server Resource instance
-    * @param string   $cmd    Command to send
+    * @param PluginIrcConnection $connection Instance
     *
     * @return void
     */
-   static private function SendCommand ($server, $cmd) {
-      fputs($server, $cmd . "\r\n");
-      Toolbox::logDebug("[SEND] $cmd \n");
+   static public function setConnection($connection) {
+      static::$connection = $connection;
    }
 }
