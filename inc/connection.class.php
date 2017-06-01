@@ -50,6 +50,10 @@ class PluginIrcConnection {
          $conf['port']
       );
 
+      if (!$this->connection) {
+         throw new \RuntimeException('Unable to connect IRC server');
+      }
+
       $this->sendCommand("USER {$conf['nick']} USING PHP IRC"); //sends the user must have 4 paramters
       $this->sendCommand("NICK {$conf['nick']}"); //sends the nickname
 

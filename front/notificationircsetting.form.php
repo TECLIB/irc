@@ -40,7 +40,16 @@ Session::checkRight("config", UPDATE);
 $notificationirc = new PluginIrcNotificationIrcSetting();
 
 if (!empty($_POST["test_irc_send"])) {
-   PluginIrcNotificationIrc::testNotification();
+   try {
+      PluginIrcNotificationIrc::testNotification();
+   } catch (\RuntimeException $e) {
+      Session::addMessageAfterRedirect(
+         __('Unable to send test notification.', 'irc') . ' ' .
+         __('Error was:', 'irc') . $e->getMessage(),
+         true,
+         ERROR
+      );
+   }
    Html::back();
 } else if (!empty($_POST["update"])) {
    $config = new Config();
