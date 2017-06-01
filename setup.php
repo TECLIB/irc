@@ -41,8 +41,8 @@ function plugin_init_irc() {
    $PLUGIN_HOOKS['csrf_compliant']['irc'] = true;
 
    if ($plugin->isActivated('irc')) {
-      NotificationTemplateTemplate::registerMode(
-         NotificationTemplateTemplate::MODE_IRC,
+      Notification_NotificationTemplate::registerMode(
+         Notification_NotificationTemplate::MODE_IRC,
          __('IRC', 'plugin_irc'),
          'irc'
       );

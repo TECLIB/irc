@@ -82,9 +82,9 @@ class PluginIrcNotificationIrc implements NotificationInterface {
       $data['body_text']                            = $options['content_text'];
       $data['recipient']                            = $options['to'];
 
-      $data['mode'] = NotificationTemplateTemplate::MODE_IRC;
+      $data['mode'] = Notification_NotificationTemplate::MODE_IRC;
 
-      $mailqueue = new QueuedMail();
+      $mailqueue = new QueuedNotification();
 
       if (!$mailqueue->add(Toolbox::addslashes_deep($data))) {
          Session::addMessageAfterRedirect(__('Error inserting IRC notification to queue'), true, ERROR);

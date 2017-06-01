@@ -20,7 +20,7 @@ class PluginIrcNotificationIrcSetting extends atoum {
 
    public function testGetMode() {
       $this->string(\PluginIrcNotificationIrcSetting::getMode())
-         ->isIdenticalTo(\NotificationTemplateTemplate::MODE_IRC);
+         ->isIdenticalTo(\Notification_NotificationTemplate::MODE_IRC);
    }
 
    public function testShowFormConfig() {

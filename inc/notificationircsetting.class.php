@@ -51,7 +51,7 @@ class PluginIrcNotificationIrcSetting extends NotificationSetting {
 
 
    static public function getMode() {
-      return NotificationTemplateTemplate::MODE_IRC;
+      return Notification_NotificationTemplate::MODE_IRC;
    }
 
 
